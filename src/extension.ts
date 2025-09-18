@@ -30,10 +30,10 @@ class NotesManager {
                 textDecoration: 'none',
                 fontWeight: 'normal',
                 margin: '0 0 0 12px',
-                fontStyle: 'normal'
-            }
+                fontStyle: 'normal',
+            },
         });
-        
+
         this.updateDecorations();
         this.setupClickHandler();
     }
@@ -41,11 +41,11 @@ class NotesManager {
     private getNotesFilePath(): string {
         const config = vscode.workspace.getConfiguration('bubulle');
         const notesFileName = config.get<string>('notesFile') || '.bubulle-notes.json';
-        
+
         if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
             return path.join(vscode.workspace.workspaceFolders[0].uri.fsPath, notesFileName);
         }
-        
+
         return path.join(os.homedir(), notesFileName);
     }
 
@@ -53,48 +53,52 @@ class NotesManager {
         try {
             if (fs.existsSync(this.notesFilePath)) {
                 const data = fs.readFileSync(this.notesFilePath, 'utf8').trim();
-                
+
                 if (!data) {
                     return { notes: [] };
                 }
-                
+
                 const parsed = JSON.parse(data);
-                
+
                 // Validation de la structure
                 if (!parsed || !Array.isArray(parsed.notes)) {
                     console.warn('Invalid notes file structure, creating new one');
                     this.backupCorruptedFile();
                     return { notes: [] };
                 }
-                
+
                 // Validation et nettoyage des notes individuelles
-                const validNotes = parsed.notes.filter((note: any) => {
-                    const isValid = note && 
-                           typeof note.filePath === 'string' && 
-                           typeof note.line === 'number' && 
-                           note.line >= 0 &&
-                           typeof note.text === 'string' && 
-                           note.text.trim().length > 0 &&
-                           typeof note.timestamp === 'string';
-                    
-                    if (!isValid) {
-                        console.warn('Invalid note found and removed:', note);
-                    }
-                    
-                    return isValid;
-                }).map((note: any) => ({
-                    ...note,
-                    filePath: path.resolve(note.filePath), // Normaliser le chemin
-                    text: note.text.trim()
-                }));
-                
+                const validNotes = parsed.notes
+                    .filter((note: any) => {
+                        const isValid =
+                            note &&
+                            typeof note.filePath === 'string' &&
+                            typeof note.line === 'number' &&
+                            note.line >= 0 &&
+                            typeof note.text === 'string' &&
+                            note.text.trim().length > 0 &&
+                            typeof note.timestamp === 'string';
+
+                        if (!isValid) {
+                            console.warn('Invalid note found and removed:', note);
+                        }
+
+                        return isValid;
+                    })
+                    .map((note: any) => ({
+                        ...note,
+                        filePath: path.resolve(note.filePath), // Normaliser le chemin
+                        text: note.text.trim(),
+                    }));
+
                 return { notes: validNotes };
             }
         } catch (error) {
             console.error('Error loading notes:', error);
-            const message = error instanceof SyntaxError ? 
-                'Fichier de notes corrompu (JSON invalide)' : 
-                'Erreur lors du chargement des notes';
+            const message =
+                error instanceof SyntaxError
+                    ? 'Fichier de notes corrompu (JSON invalide)'
+                    : 'Erreur lors du chargement des notes';
             vscode.window.showWarningMessage(message);
             this.backupCorruptedFile();
         }
@@ -119,17 +123,16 @@ class NotesManager {
             if (!notesData || !Array.isArray(notesData.notes)) {
                 throw new Error('Invalid notes data structure');
             }
-            
+
             const dir = path.dirname(this.notesFilePath);
             if (!fs.existsSync(dir)) {
                 fs.mkdirSync(dir, { recursive: true });
             }
-            
+
             // Sauvegarde atomique avec fichier temporaire
             const tempPath = this.notesFilePath + '.tmp';
             fs.writeFileSync(tempPath, JSON.stringify(notesData, null, 2));
             fs.renameSync(tempPath, this.notesFilePath);
-            
         } catch (error) {
             vscode.window.showErrorMessage(`Erreur lors de la sauvegarde des notes: ${error}`);
             console.error('Error saving notes:', error);
@@ -142,7 +145,7 @@ class NotesManager {
             vscode.window.showErrorMessage('Paramètres invalides pour la note');
             return;
         }
-        
+
         // Ouvrir directement l'éditeur multi-ligne
         const noteText = await this.showAddNoteEditor(filePath, line);
 
@@ -157,7 +160,7 @@ class NotesManager {
                     filePath: path.resolve(filePath), // Normaliser le chemin
                     line,
                     text: noteText.trim(),
-                    timestamp: new Date().toISOString()
+                    timestamp: new Date().toISOString(),
                 };
 
                 if (existingNoteIndex >= 0) {
@@ -170,13 +173,13 @@ class NotesManager {
 
                 this.saveNotes(notesData);
                 this.updateDecorations();
-                
+
                 // Force une mise à jour après un délai pour s'assurer que les décorations sont visibles
                 setTimeout(() => {
                     this.updateDecorations();
                 }, 200);
             } catch (error) {
-                vscode.window.showErrorMessage('Erreur lors de l\'ajout de la note');
+                vscode.window.showErrorMessage("Erreur lors de l'ajout de la note");
                 console.error('Error adding note:', error);
             }
         }
@@ -185,9 +188,7 @@ class NotesManager {
     getNotesForFile(filePath: string): Note[] {
         const notesData = this.loadNotes();
         const normalizedPath = path.resolve(filePath);
-        return notesData.notes.filter(note => 
-            path.resolve(note.filePath) === normalizedPath
-        );
+        return notesData.notes.filter(note => path.resolve(note.filePath) === normalizedPath);
     }
 
     private getRelativeDisplayPath(filePath: string): string {
@@ -199,7 +200,6 @@ class NotesManager {
         return path.basename(filePath);
     }
 
-
     private setupClickHandler(): void {
         // Créer une commande pour gérer les clics sur l'icône
         const clickCommand = vscode.commands.registerCommand('bubulle.clickIcon', (args: any) => {
@@ -207,67 +207,77 @@ class NotesManager {
             if (!editor) {
                 return;
             }
-            
+
             const line = args?.line !== undefined ? args.line : editor.selection.active.line;
             const filePath = editor.document.uri.fsPath;
             const notes = this.getNotesForFile(filePath);
             const note = notes.find(n => n.line === line);
-            
+
             if (note) {
                 this.showSpeechBubble(note);
             }
         });
-        
+
         this.context.subscriptions.push(clickCommand);
-        
+
         // Détection de clics améliorée avec debounce
         let clickTimeout: NodeJS.Timeout | null = null;
         let lastClickPosition: { line: number; character: number } | null = null;
-        
-        const selectionHandler = vscode.window.onDidChangeTextEditorSelection((event) => {
+
+        const selectionHandler = vscode.window.onDidChangeTextEditorSelection(event => {
             const editor = event.textEditor;
             const selection = event.selections[0];
-            
-            if (!editor || !selection.isEmpty || event.kind !== vscode.TextEditorSelectionChangeKind.Mouse) {
+
+            if (
+                !editor ||
+                !selection.isEmpty ||
+                event.kind !== vscode.TextEditorSelectionChangeKind.Mouse
+            ) {
                 return;
             }
-            
+
             const line = selection.active.line;
             const character = selection.active.character;
-            
+
             // Éviter les clics répétés sur la même position
-            if (lastClickPosition && 
-                lastClickPosition.line === line && 
-                lastClickPosition.character === character) {
+            if (
+                lastClickPosition &&
+                lastClickPosition.line === line &&
+                lastClickPosition.character === character
+            ) {
                 return;
             }
-            
+
             lastClickPosition = { line, character };
-            
+
             // Debounce pour éviter les clics multiples
             if (clickTimeout) {
                 clearTimeout(clickTimeout);
             }
-            
+
             clickTimeout = setTimeout(() => {
                 this.handlePotentialNoteClick(editor, line, character);
                 clickTimeout = null;
             }, 100);
         });
-        
+
         this.context.subscriptions.push(selectionHandler);
     }
 
-    private handlePotentialNoteClick(editor: vscode.TextEditor, line: number, character: number): void {
+    private handlePotentialNoteClick(
+        editor: vscode.TextEditor,
+        line: number,
+        character: number
+    ): void {
         try {
             const lineText = editor.document.lineAt(line).text;
             const isNearEndOfLine = character >= Math.max(0, lineText.length - 10);
-            
+
             if (isNearEndOfLine) {
                 const filePath = editor.document.uri.fsPath;
                 const notes = this.getNotesForFile(filePath);
                 const note = notes.find(n => n.line === line);
-                
+
                 if (note) {
                     this.showSpeechBubble(note);
                 }
@@ -286,7 +296,7 @@ class NotesManager {
         const filePath = editor.document.uri.fsPath;
         const notes = this.getNotesForFile(filePath);
         const note = notes.find(n => n.line === line);
-        
+
         if (note) {
             this.showSpeechBubble(note);
         }
@@ -298,29 +308,30 @@ class NotesManager {
 
     private async showEditableNoteDialog(note: Note): Promise<void> {
         const fileName = this.getRelativeDisplayPath(note.filePath);
-        const truncatedText = note.text.length > 50 ? note.text.substring(0, 50) + '...' : note.text;
+        const truncatedText =
+            note.text.length > 50 ? note.text.substring(0, 50) + '...' : note.text;
         const date = new Date(note.timestamp);
         const formattedDate = isNaN(date.getTime()) ? 'Date inconnue' : date.toLocaleDateString();
-        
+
         const actions = [
             {
                 label: '$(edit) Modifier',
-                description: 'Éditer le contenu de cette note'
+                description: 'Éditer le contenu de cette note',
             },
             {
                 label: '$(trash) Supprimer',
-                description: 'Supprimer définitivement cette note'
+                description: 'Supprimer définitivement cette note',
             },
             {
                 label: '$(close) Annuler',
-                description: 'Fermer sans action'
-            }
+                description: 'Fermer sans action',
+            },
         ];
-        
+
         const choice = await vscode.window.showQuickPick(actions, {
             placeHolder: `💬 ${fileName} (Ligne ${note.line + 1}) • ${formattedDate}`,
             matchOnDescription: true,
-            ignoreFocusOut: true
+            ignoreFocusOut: true,
         });
 
         switch (choice?.label) {
@@ -333,24 +344,23 @@ class NotesManager {
         }
     }
 
-
     private async editNote(note: Note): Promise<void> {
         const fileName = this.getRelativeDisplayPath(note.filePath);
-        
-        return new Promise((resolve) => {
+
+        return new Promise(resolve => {
             const panel = vscode.window.createWebviewPanel(
                 'bubulleEditNote',
                 `Modifier la note - ${fileName} (Ligne ${note.line + 1})`,
                 vscode.ViewColumn.Beside,
                 {
                     enableScripts: true,
-                    retainContextWhenHidden: false
+                    retainContextWhenHidden: false,
                 }
             );
 
             panel.webview.html = this.getEditNoteWebviewContent(note);
 
-            panel.webview.onDidReceiveMessage(async (message) => {
+            panel.webview.onDidReceiveMessage(async message => {
                 switch (message.command) {
                     case 'save':
                         if (message.text && message.text.trim() !== note.text) {
@@ -374,7 +384,7 @@ class NotesManager {
 
     private getEditNoteWebviewContent(note: Note): string {
         const fileName = path.basename(note.filePath) || 'Fichier inconnu';
-        
+
         return `
             <!DOCTYPE html>
             <html>
@@ -518,21 +528,21 @@ class NotesManager {
 
     private async showAddNoteEditor(filePath: string, line: number): Promise<string | undefined> {
         const fileName = this.getRelativeDisplayPath(filePath);
-        
-        return new Promise((resolve) => {
+
+        return new Promise(resolve => {
             const panel = vscode.window.createWebviewPanel(
                 'bubulleAddNote',
                 `Nouvelle note - ${fileName} (Ligne ${line + 1})`,
                 vscode.ViewColumn.Beside,
                 {
                     enableScripts: true,
-                    retainContextWhenHidden: false
+                    retainContextWhenHidden: false,
                 }
             );
 
             panel.webview.html = this.getAddNoteWebviewContent(fileName, line);
 
-            panel.webview.onDidReceiveMessage((message) => {
+            panel.webview.onDidReceiveMessage(message => {
                 switch (message.command) {
                     case 'save':
                         panel.dispose();
@@ -694,8 +704,9 @@ class NotesManager {
 
     private async deleteNote(note: Note): Promise<void> {
         const fileName = path.basename(note.filePath) || 'Fichier inconnu';
-        const truncatedText = note.text.length > 50 ? note.text.substring(0, 50) + '...' : note.text;
-        
+        const truncatedText =
+            note.text.length > 50 ? note.text.substring(0, 50) + '...' : note.text;
+
         const confirm = await vscode.window.showWarningMessage(
             `Supprimer la note de ${fileName} (Ligne ${note.line + 1}) ?\n\n"${truncatedText}"`,
             { modal: true },
@@ -707,19 +718,21 @@ class NotesManager {
             try {
                 const notesData = this.loadNotes();
                 const originalLength = notesData.notes.length;
-                
+
                 notesData.notes = notesData.notes.filter(
                     n => !(n.filePath === note.filePath && n.line === note.line)
                 );
-                
+
                 if (notesData.notes.length === originalLength) {
-                    vscode.window.showWarningMessage('Note non trouvée, elle a peut-être déjà été supprimée');
+                    vscode.window.showWarningMessage(
+                        'Note non trouvée, elle a peut-être déjà été supprimée'
+                    );
                     return;
                 }
-                
+
                 this.saveNotes(notesData);
                 this.updateDecorations();
-                
+
                 vscode.window.showInformationMessage('Note supprimée');
             } catch (error) {
                 vscode.window.showErrorMessage('Erreur lors de la suppression de la note');
@@ -737,14 +750,13 @@ class NotesManager {
         if (noteIndex >= 0) {
             notesData.notes[noteIndex].text = newText;
             notesData.notes[noteIndex].timestamp = new Date().toISOString();
-            
+
             this.saveNotes(notesData);
             this.updateDecorations();
-            
+
             vscode.window.showInformationMessage('Note mise à jour');
         }
     }
-
 
     updateDecorations(): void {
         const editor = vscode.window.activeTextEditor;
@@ -755,37 +767,43 @@ class NotesManager {
         try {
             const filePath = editor.document.uri.fsPath;
             const notes = this.getNotesForFile(filePath);
-            
+
             console.log(`Updating decorations for ${filePath}, found ${notes.length} notes`);
-            
+
             // Filtrer les notes avec des numéros de ligne valides
             const validNotes = notes.filter(note => {
                 const isValid = note.line >= 0 && note.line < editor.document.lineCount;
                 if (!isValid) {
-                    console.warn(`Invalid note on line ${note.line}, document has ${editor.document.lineCount} lines`);
+                    console.warn(
+                        `Invalid note on line ${note.line}, document has ${editor.document.lineCount} lines`
+                    );
                 }
                 return isValid;
             });
-            
+
             console.log(`${validNotes.length} valid notes found`);
-            
+
             const decorations: vscode.DecorationOptions[] = validNotes.map(note => {
                 const date = new Date(note.timestamp);
-                const formattedDate = isNaN(date.getTime()) ? 'Date inconnue' : date.toLocaleString();
-                
+                const formattedDate = isNaN(date.getTime())
+                    ? 'Date inconnue'
+                    : date.toLocaleString();
+
                 // Formater le texte pour l'affichage multi-ligne
                 const formattedText = this.formatTextForDisplay(note.text, 60);
-                
+
                 const hoverMessage = new vscode.MarkdownString();
                 hoverMessage.supportHtml = true;
                 hoverMessage.appendMarkdown('🫧\n\n');
-                hoverMessage.appendMarkdown(`<span style="color: #0366d6;">${formattedText.replace(/\n/g, '<br>')}</span>`);
+                hoverMessage.appendMarkdown(
+                    `<span style="color: #0366d6;">${formattedText.replace(/\n/g, '<br>')}</span>`
+                );
                 hoverMessage.appendMarkdown(`\n\nAjoutée le ${formattedDate}`);
-                
+
                 const lineLength = editor.document.lineAt(note.line).text.length;
                 return {
                     range: new vscode.Range(note.line, lineLength, note.line, lineLength),
-                    hoverMessage: hoverMessage
+                    hoverMessage: hoverMessage,
                 };
             });
 
@@ -800,11 +818,11 @@ class NotesManager {
         if (!text) {
             return '';
         }
-        
+
         const words = text.split(' ');
         const lines: string[] = [];
         let currentLine = '';
-        
+
         for (const word of words) {
             if (currentLine.length + word.length + 1 <= maxLineLength) {
                 currentLine += (currentLine ? ' ' : '') + word;
@@ -815,17 +833,17 @@ class NotesManager {
                 currentLine = word;
             }
         }
-        
+
         if (currentLine) {
             lines.push(currentLine);
         }
-        
+
         return lines.join('\n');
     }
 
     showAllNotes(): void {
         const notesData = this.loadNotes();
-        
+
         if (notesData.notes.length === 0) {
             vscode.window.showInformationMessage('Aucune note trouvée.');
             return;
@@ -846,14 +864,14 @@ class NotesManager {
             vscode.ViewColumn.One,
             {
                 enableScripts: true,
-                retainContextWhenHidden: true
+                retainContextWhenHidden: true,
             }
         );
 
         panel.webview.html = this.getWebviewContent(sortedNotes);
-        
+
         // Gérer les messages de la webview
-        panel.webview.onDidReceiveMessage((message) => {
+        panel.webview.onDidReceiveMessage(message => {
             switch (message.command) {
                 case 'openFile':
                     this.openFileAtLine(message.filePath, message.line);
@@ -884,7 +902,9 @@ class NotesManager {
             editor.selection = new vscode.Selection(position, position);
             editor.revealRange(new vscode.Range(position, position));
         } catch (error) {
-            vscode.window.showErrorMessage(`Impossible d'ouvrir le fichier: ${path.basename(filePath)}`);
+            vscode.window.showErrorMessage(
+                `Impossible d'ouvrir le fichier: ${path.basename(filePath)}`
+            );
             console.error('Error opening file:', error);
         }
     }
@@ -894,11 +914,11 @@ class NotesManager {
             const notesData = this.loadNotes();
             const normalizedPath = path.resolve(filePath);
             const originalLength = notesData.notes.length;
-            
+
             notesData.notes = notesData.notes.filter(
                 note => !(path.resolve(note.filePath) === normalizedPath && note.line === line)
             );
-            
+
             if (notesData.notes.length < originalLength) {
                 this.saveNotes(notesData);
                 this.updateDecorations();
@@ -912,9 +932,12 @@ class NotesManager {
 
     private getWebviewContent(notes: Note[]): string {
         const groupedNotes = this.groupNotesByFile(notes);
-        const filesHtml = Object.entries(groupedNotes).map(([filePath, fileNotes]) => {
-            const relativeFilePath = this.getRelativeDisplayPath(filePath);
-            const notesHtml = fileNotes.map(note => `
+        const filesHtml = Object.entries(groupedNotes)
+            .map(([filePath, fileNotes]) => {
+                const relativeFilePath = this.getRelativeDisplayPath(filePath);
+                const notesHtml = fileNotes
+                    .map(
+                        note => `
                 <div class="note-item" data-file="${note.filePath}" data-line="${note.line}">
                     <div class="note-header">
                         <span class="line-number">Ligne ${note.line + 1}</span>
@@ -930,9 +953,11 @@ class NotesManager {
                     <div class="note-text">${this.escapeHtml(note.text)}</div>
                     <div class="note-timestamp">${new Date(note.timestamp).toLocaleString()}</div>
                 </div>
-            `).join('');
+            `
+                    )
+                    .join('');
 
-            return `
+                return `
                 <div class="file-group">
                     <div class="file-header">
                         <span class="codicon codicon-file"></span>
@@ -944,7 +969,8 @@ class NotesManager {
                     </div>
                 </div>
             `;
-        }).join('');
+            })
+            .join('');
 
         return `
             <!DOCTYPE html>
@@ -1114,14 +1140,17 @@ class NotesManager {
     }
 
     private groupNotesByFile(notes: Note[]): Record<string, Note[]> {
-        return notes.reduce((groups, note) => {
-            const filePath = note.filePath;
-            if (!groups[filePath]) {
-                groups[filePath] = [];
-            }
-            groups[filePath].push(note);
-            return groups;
-        }, {} as Record<string, Note[]>);
+        return notes.reduce(
+            (groups, note) => {
+                const filePath = note.filePath;
+                if (!groups[filePath]) {
+                    groups[filePath] = [];
+                }
+                groups[filePath].push(note);
+                return groups;
+            },
+            {} as Record<string, Note[]>
+        );
     }
 
     private escapeHtml(text: string): string {
@@ -1143,30 +1172,36 @@ export function activate(context: vscode.ExtensionContext) {
 
     const notesManager = new NotesManager(context);
 
-    const addNoteCommand = vscode.commands.registerCommand('bubulle.addNote', async (uri: vscode.Uri, line: number) => {
-        const editor = vscode.window.activeTextEditor;
-        if (!editor) {
-            vscode.window.showWarningMessage('No active editor found.');
-            return;
-        }
+    const addNoteCommand = vscode.commands.registerCommand(
+        'bubulle.addNote',
+        async (uri: vscode.Uri, line: number) => {
+            const editor = vscode.window.activeTextEditor;
+            if (!editor) {
+                vscode.window.showWarningMessage('No active editor found.');
+                return;
+            }
 
-        const filePath = editor.document.uri.fsPath;
-        const currentLine = line !== undefined ? line : editor.selection.active.line;
-        
-        await notesManager.addNote(filePath, currentLine);
-    });
+            const filePath = editor.document.uri.fsPath;
+            const currentLine = line !== undefined ? line : editor.selection.active.line;
+
+            await notesManager.addNote(filePath, currentLine);
+        }
+    );
 
     const showNotesCommand = vscode.commands.registerCommand('bubulle.showNotes', () => {
         notesManager.showAllNotes();
     });
 
-    const showBubbleCommand = vscode.commands.registerCommand('bubulle.showBubble', (uri: vscode.Uri, line: number) => {
-        const editor = vscode.window.activeTextEditor;
-        if (editor) {
-            const currentLine = line !== undefined ? line : editor.selection.active.line;
-            notesManager.showBubbleForLine(currentLine);
+    const showBubbleCommand = vscode.commands.registerCommand(
+        'bubulle.showBubble',
+        (uri: vscode.Uri, line: number) => {
+            const editor = vscode.window.activeTextEditor;
+            if (editor) {
+                const currentLine = line !== undefined ? line : editor.selection.active.line;
+                notesManager.showBubbleForLine(currentLine);
+            }
         }
-    });
+    );
 
     const onDidChangeActiveTextEditor = vscode.window.onDidChangeActiveTextEditor(() => {
         if (notesManager) {
@@ -1182,7 +1217,7 @@ export function activate(context: vscode.ExtensionContext) {
     });
 
     // Écouter les changements de configuration
-    const onDidChangeConfiguration = vscode.workspace.onDidChangeConfiguration((event) => {
+    const onDidChangeConfiguration = vscode.workspace.onDidChangeConfiguration(event => {
         if (event.affectsConfiguration('bubulle')) {
             try {
                 // Recréer le gestionnaire de notes avec la nouvelle configuration
