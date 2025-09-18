@@ -1,4 +1,4 @@
-# 🫧 Bubulle - Code Review Notes
+# Bubulle - Code Review Notes
 
 > Let your ideas bubble inside your code
 
@@ -6,32 +6,32 @@
 
 ![Bubulle Demo](https://via.placeholder.com/800x400/0366d6/ffffff?text=Bubulle+Extension+Demo)
 
-## ✨ Features
+## Features
 
-### 💬 **Inline Code Notes**
+### Inline Code Notes
 - Add notes to any line of code with a simple right-click
-- GitHub-style comment indicators (💬) appear at the end of lines
+- GitHub-style comment indicators appear at the end of lines
 - Clean, non-intrusive design that doesn't interfere with your code
 
-### 🎨 **Beautiful Interface**
-- Hover to preview notes with a soap bubble (🫧) indicator
+### Beautiful Interface
+- Hover to preview notes with a soap bubble indicator
 - Multi-line text support with automatic formatting
 - Professional color scheme matching GitHub's review system
 - Responsive editors for creating and editing notes
 
-### 📁 **Smart Organization**
+### Smart Organization
 - Notes are automatically organized by file and line number
 - View all notes in a comprehensive dashboard
 - Quick navigation to any noted line with one click
 - Persistent storage across VSCode sessions
 
-### 🛠️ **Developer-Friendly**
+### Developer-Friendly
 - Configurable notes file location
 - Atomic file operations for data safety
 - Automatic backup of corrupted files
 - Robust error handling and validation
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Installation
 1. Open VSCode
@@ -48,7 +48,7 @@
 4. Click **"Save"** or press `Ctrl+Enter`
 
 #### Viewing Notes
-- **Hover** over the 💬 icon to preview a note
+- **Hover** over the icon to preview a note
 - **Click** near the end of a line with a note to open the action menu
 - Use **Command Palette** (`Ctrl+Shift+P`) → "Show Notes" to see all notes
 
@@ -57,7 +57,7 @@
 - **Delete**: Click on a note → Select "Delete" → Confirm
 - **Navigate**: Use the notes dashboard to jump to any file:line
 
-## ⚙️ Configuration
+## Configuration
 
 This extension contributes the following settings:
 
@@ -70,9 +70,17 @@ This extension contributes the following settings:
 }
 ```
 
-## 📁 File Structure
+## File Structure
 
-Notes are stored in a JSON file with the following structure:
+### Notes Storage Location
+Notes are stored globally in VS Code's extension directory, allowing you to share notes across different projects:
+
+- **Global storage**: `~/.vscode/extensions/Joey-Galligani.bubulle/.bubulle-notes.json`
+- **Fallback**: `~/.bubulle-notes.json` (if extension directory cannot be created)
+
+This means your notes are available across all your projects and workspaces!
+
+### File Structure
 ```json
 {
     "notes": [
@@ -86,7 +94,13 @@ Notes are stored in a JSON file with the following structure:
 }
 ```
 
-## 🎯 Use Cases
+### Finding Your Notes File
+To locate your notes file:
+1. Open Command Palette (`Ctrl+Shift+P`)
+2. Type "Bubulle: Debug Notes"
+3. This will show you the file path and number of notes
+
+## Use Cases
 
 - **Code Reviews**: Leave detailed feedback on specific lines
 - **Documentation**: Add contextual explanations to complex code
@@ -94,7 +108,7 @@ Notes are stored in a JSON file with the following structure:
 - **Learning**: Annotate code while studying new codebases
 - **Collaboration**: Share insights with team members
 
-## 🔧 Keyboard Shortcuts
+## Keyboard Shortcuts
 
 | Action | Shortcut |
 |--------|----------|
@@ -102,28 +116,28 @@ Notes are stored in a JSON file with the following structure:
 | Cancel editing | `Escape` |
 | Show all notes | `Ctrl+Shift+P` → "Show Notes" |
 
-## 🐛 Known Issues
+## Known Issues
 
 - Notes are tied to specific line numbers and may become misaligned if code above them is modified
 - Large note files (1000+ notes) may experience slower loading times
 
-## 📝 Release Notes
+## Release Notes
 
-### 0.0.1
+### 0.1.0
 - Initial release
 - Basic note creation and management
 - GitHub-style interface
 - Multi-line note support
 - Notes dashboard with file grouping
 
-## 🤝 Contributing
+## Contributing
 
-Found a bug or have a feature request? Please open an issue on our [GitHub repository](https://github.com/your-username/bubulle).
+Found a bug or have a feature request? Please open an issue on our [GitHub repository](https://github.com/Joey-Galligani/bubulle).
 
-## 📄 License
+## License
 
 This extension is licensed under the MIT License. See LICENSE file for details.
 
 ---
 
-**Enjoy bubbling your ideas! 🫧**
+**Enjoy bubbling your ideas!**

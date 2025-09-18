@@ -1,104 +1,225 @@
-# Contributing to Bubulle
+# Contributing Guide - Bubulle
 
-Merci de votre intérêt pour contribuer à Bubulle ! 🫧
+Thank you for your interest in contributing to Bubulle! This guide will help you understand the project structure and best practices to follow.
 
-## Comment contribuer
+## Quick Start
 
-### Signaler un bug
+### Prerequisites
+- Node.js 18+ 
+- npm 8+
+- VS Code (for testing the extension)
 
-Si vous trouvez un bug, veuillez créer une issue avec les informations suivantes :
+### Installation
+```bash
+git clone https://github.com/Joey-Galligani/bubulle.git
+cd bubulle
+npm install
+```
 
-- **Description** : Description claire du problème
-- **Étapes pour reproduire** : Comment reproduire le bug
-- **Comportement attendu** : Ce qui devrait se passer
-- **Comportement actuel** : Ce qui se passe réellement
-- **Environnement** : Version de VS Code, OS, version de l'extension
+### Development
+```bash
+# Compilation in watch mode
+npm run watch
 
-### Proposer une fonctionnalité
+# Linting
+npm run lint
+npm run lint:fix
 
-Pour proposer une nouvelle fonctionnalité :
+# Code formatting
+npm run format
+npm run format:check
 
-1. Vérifiez d'abord qu'elle n'existe pas déjà dans les issues
-2. Créez une issue avec le label "enhancement"
-3. Décrivez clairement la fonctionnalité et son utilité
+# Tests
+npm run test
 
-### Contribuer au code
+# Packaging
+npm run package
+```
 
-1. **Fork** le repository
-2. **Clone** votre fork localement
-3. **Créez** une branche pour votre fonctionnalité : `git checkout -b feature/ma-fonctionnalite`
-4. **Installez** les dépendances : `npm install`
-5. **Développez** votre fonctionnalité
-6. **Testez** vos modifications
-7. **Commitez** vos changements : `git commit -m "Add: description de la fonctionnalité"`
-8. **Pushez** vers votre fork : `git push origin feature/ma-fonctionnalite`
-9. **Créez** une Pull Request
+## Architecture
 
-## Standards de code
+See [ARCHITECTURE.md](./ARCHITECTURE.md) to understand the project structure.
 
-### TypeScript
-- Utilisez TypeScript strict
-- Ajoutez des types explicites
-- Suivez les conventions de nommage camelCase
-- Documentez les fonctions complexes
-
-### Messages d'erreur
-- Tous les messages d'erreur doivent être en anglais
-- Utilisez des messages clairs et informatifs
-- Évitez les messages techniques pour l'utilisateur final
-
-### Tests
-- Ajoutez des tests pour les nouvelles fonctionnalités
-- Assurez-vous que tous les tests passent
-- Maintenez une couverture de test raisonnable
-
-## Structure du projet
-
+### Folder Structure
 ```
 src/
-├── extension.ts          # Point d'entrée principal
-└── test/
-    └── extension.test.ts # Tests unitaires
-
-out/                      # Code compilé (généré automatiquement)
-resources/                # Ressources statiques (icônes, etc.)
+├── constants.ts              # Constants and configuration
+├── types.ts                  # TypeScript types
+├── utils/                    # Utilities
+├── services/                 # Business logic
+├── webview/                  # User interfaces
+└── managers/                 # Orchestration
 ```
 
-## Développement local
+## Code Standards
 
-1. Clonez le repository
-2. Installez les dépendances : `npm install`
-3. Ouvrez le projet dans VS Code
-4. Appuyez sur `F5` pour lancer l'extension en mode debug
-5. Une nouvelle fenêtre VS Code s'ouvrira avec votre extension chargée
+### TypeScript
+- Use explicit types everywhere
+- Prefer interfaces over types for objects
+- Document public functions with JSDoc
+- Use `const assertions` when appropriate
 
-## Build et packaging
+### Naming Conventions
+- **Variables/Functions**: `camelCase`
+- **Classes/Interfaces**: `PascalCase`
+- **Constants**: `UPPER_SNAKE_CASE`
+- **Files**: `camelCase.ts`
 
-```bash
-# Compiler le TypeScript
-npm run compile
+### Imports/Exports
+```typescript
+// ✅ Good
+import { COMMANDS } from '../constants';
+export { NotesManager } from './NotesManager';
 
-# Lancer les tests
-npm test
-
-# Linter le code
-npm run lint
-
-# Créer le package .vsix
-npm install -g vsce
-vsce package
+// ❌ Avoid
+import * as constants from '../constants';
+export default NotesManager;
 ```
 
-## Guidelines pour les Pull Requests
+### Error Handling
+```typescript
+// ✅ Good
+try {
+    const result = await riskyOperation();
+    return result;
+} catch (error) {
+    console.error('Operation failed:', error);
+    vscode.window.showErrorMessage(UI_STRINGS.ERRORS.OPERATION_FAILED);
+    return null;
+}
 
-- **Titre clair** : Décrivez brièvement ce que fait la PR
-- **Description détaillée** : Expliquez les changements et pourquoi
-- **Tests** : Assurez-vous que vos changements sont testés
-- **Documentation** : Mettez à jour la documentation si nécessaire
-- **Une fonctionnalité par PR** : Gardez les PRs focalisées
+// ❌ Avoid
+const result = await riskyOperation(); // No error handling
+```
 
-## Questions ?
+## Testing
 
-N'hésitez pas à poser des questions dans les issues ou à contacter les mainteneurs.
+### Test Structure
+```
+src/test/
+├── unit/                     # Unit tests
+├── integration/              # Integration tests
+└── fixtures/                 # Test data
+```
 
-Merci de contribuer à Bubulle ! 🫧
+### Writing Tests
+```typescript
+import * as assert from 'assert';
+import { NotesStorage } from '../services/NotesStorage';
+
+suite('NotesStorage', () => {
+    test('should load empty notes when file does not exist', () => {
+        const storage = new NotesStorage();
+        const notes = storage.loadNotes();
+        assert.strictEqual(notes.notes.length, 0);
+    });
+});
+```
+
+## User Interfaces
+
+### Webviews
+- Use VS Code CSS variables for theming
+- Implement standard keyboard shortcuts
+- Handle loading and error states
+- Respect accessibility guidelines
+
+### User Messages
+- Use constants from `UI_STRINGS`
+- Prefer informative messages over technical errors
+- Suggest corrective actions when possible
+
+## Adding Features
+
+### 1. Simple New Feature
+1. Add types in `types.ts`
+2. Add constants in `constants.ts`
+3. Implement logic in the appropriate service
+4. Expose via the corresponding manager
+5. Add tests
+
+### 2. New Service
+1. Create file in `src/services/`
+2. Define public interface
+3. Implement business logic
+4. Add unit tests
+5. Integrate via managers
+
+### 3. New Interface
+1. Add templates in `WebviewManager`
+2. Define message types
+3. Implement interaction logic
+4. Test with different VS Code themes
+
+## Debugging
+
+### Development Logs
+```typescript
+// In development
+console.log('Debug info:', data);
+
+// In production, use VS Code Output Channel
+const outputChannel = vscode.window.createOutputChannel('Bubulle');
+outputChannel.appendLine('Debug info: ' + JSON.stringify(data));
+```
+
+### Testing in VS Code
+1. Open the project in VS Code
+2. Press `F5` to launch in debug mode
+3. A new VS Code window opens with the extension
+4. Test the features
+5. Check the Debug Console for logs
+
+## PR Checklist
+
+Before submitting a Pull Request:
+
+- [ ] Code compiles without errors (`npm run compile`)
+- [ ] Linting passed (`npm run lint`)
+- [ ] Correct formatting (`npm run format:check`)
+- [ ] Tests passed (`npm run test`)
+- [ ] Documentation updated if necessary
+- [ ] Descriptive commit messages
+- [ ] Feature manually tested in VS Code
+
+## Common Issues
+
+### Extension doesn't load
+- Check errors in the Debug Console
+- Ensure `package.json` is valid
+- Recompile with `npm run compile`
+
+### Decorations don't appear
+- Check that notes are saved
+- Force decoration update
+- Check line numbers in logs
+
+### Webview doesn't display
+- Check JavaScript errors in the webview
+- Ensure HTML is valid
+- Test with different VS Code themes
+
+## Best Practices
+
+### Performance
+- Avoid expensive operations in event handlers
+- Use debouncing for user interactions
+- Load data lazily
+
+### Security
+- Always escape HTML content in webviews
+- Validate user input data
+- Use atomic saves to prevent corruption
+
+### Accessibility
+- Use appropriate labels
+- Support keyboard navigation
+- Respect color contrast
+
+## Support
+
+- **Issues**: [GitHub Issues](https://github.com/Joey-Galligani/bubulle/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/Joey-Galligani/bubulle/discussions)
+- **Email**: galliganijoey@gmail.com
+
+Thank you for contributing to Bubulle!

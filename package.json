@@ -1,8 +1,10 @@
 {
   "name": "bubulle",
-  "displayName": "🫧 Bubulle - Code Review Notes",
+  "displayName": "Bubulle - Code Review Notes",
   "description": "GitHub-style inline code review notes. Add, edit, and manage contextual notes directly on any line of your code.",
-  "version": "0.0.1",
+  "version": "0.1.0",
+  "publisher": "Joey-Galligani",
+  "icon": "resources/icon.png",
   "engines": {
     "vscode": "^1.74.0"
   },
@@ -48,6 +50,10 @@
       {
         "command": "bubulle.showBubble",
         "title": "Show Bubble"
+      },
+      {
+        "command": "bubulle.debug",
+        "title": "Debug Notes"
       }
     ],
     "menus": {
