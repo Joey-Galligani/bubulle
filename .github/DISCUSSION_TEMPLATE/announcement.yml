@@ -1,0 +1,46 @@
+name: Announcement
+description: Share news, updates, or announcements about Bubulle
+title: "[ANNOUNCEMENT] "
+labels: ["announcement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Share news, updates, or announcements with the community!
+
+  - type: textarea
+    id: announcement
+    attributes:
+      label: Announcement
+      description: What would you like to announce?
+      placeholder: Share your news, updates, or announcements here...
+    validations:
+      required: true
+
+  - type: dropdown
+    id: type
+    attributes:
+      label: Type of announcement
+      description: What type of announcement is this?
+      options:
+        - Release announcement
+        - Feature update
+        - Community news
+        - Event announcement
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: details
+    attributes:
+      label: Additional details
+      description: Any additional details, links, or information
+      placeholder: Add any additional details, links, or information here...
+
+  - type: textarea
+    id: links
+    attributes:
+      label: Related links
+      description: Any related links or resources
+      placeholder: Add any related links or resources here...

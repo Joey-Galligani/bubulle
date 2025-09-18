@@ -1,0 +1,64 @@
+name: Ideas
+description: Share ideas and brainstorm about Bubulle's future
+title: "[IDEAS] "
+labels: ["ideas", "brainstorming"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Share your ideas and brainstorm about Bubulle's future!
+
+  - type: textarea
+    id: idea
+    attributes:
+      label: Your idea
+      description: Describe your idea
+      placeholder: What's your idea for improving Bubulle?
+    validations:
+      required: true
+
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Motivation
+      description: What inspired this idea?
+      placeholder: What inspired this idea? What problem does it solve?
+    validations:
+      required: true
+
+  - type: textarea
+    id: implementation
+    attributes:
+      label: Implementation thoughts
+      description: Any thoughts on how this could be implemented?
+      placeholder: How do you think this could be implemented?
+
+  - type: textarea
+    id: impact
+    attributes:
+      label: Impact
+      description: What impact would this have?
+      placeholder: What impact would this idea have on users?
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      description: What category does this idea fall under?
+      options:
+        - User Interface
+        - User Experience
+        - Performance
+        - Integration
+        - Developer Experience
+        - Documentation
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional context
+      description: Any additional context, examples, or references
+      placeholder: Add any additional context, examples, or references here...

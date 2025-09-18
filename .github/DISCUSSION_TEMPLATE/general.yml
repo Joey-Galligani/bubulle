@@ -1,0 +1,40 @@
+name: General Discussion
+description: General questions and discussions about Bubulle
+title: "[DISCUSSION] "
+labels: ["question", "discussion"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for starting a discussion! Please provide as much detail as possible.
+
+  - type: textarea
+    id: discussion
+    attributes:
+      label: What would you like to discuss?
+      description: Please describe your question or topic for discussion
+      placeholder: Tell us what's on your mind...
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Any additional context, screenshots, or examples that might help
+      placeholder: Add any additional context here...
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      description: What category does this discussion fall under?
+      options:
+        - General question
+        - Feature request
+        - Usage help
+        - Performance
+        - Integration
+        - Other
+    validations:
+      required: true

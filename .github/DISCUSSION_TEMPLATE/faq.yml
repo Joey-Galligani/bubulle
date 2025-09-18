@@ -1,0 +1,60 @@
+name: FAQ
+description: Frequently Asked Questions about Bubulle
+title: "[FAQ] "
+labels: ["faq", "help"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Ask a frequently asked question about Bubulle!
+
+  - type: textarea
+    id: question
+    attributes:
+      label: Your question
+      description: What's your question?
+      placeholder: What would you like to know?
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: Provide context for your question
+      placeholder: Provide any relevant context for your question
+    validations:
+      required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      description: What category does your question fall under?
+      options:
+        - Installation
+        - Usage
+        - Configuration
+        - Troubleshooting
+        - Performance
+        - Integration
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Please provide your environment details
+      placeholder: |
+        - OS: [e.g. Windows 10, macOS 12.0, Ubuntu 20.04]
+        - VS Code Version: [e.g. 1.74.0]
+        - Bubulle Extension Version: [e.g. 0.0.1]
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional information
+      description: Any additional information that might help
+      placeholder: Add any additional information that might help answer your question...

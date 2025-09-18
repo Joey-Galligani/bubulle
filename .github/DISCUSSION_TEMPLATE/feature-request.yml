@@ -1,0 +1,70 @@
+name: Feature Request
+description: Suggest a new feature for Bubulle
+title: "[FEATURE REQUEST] "
+labels: ["enhancement", "feature-request"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting a new feature! Please provide as much detail as possible.
+
+  - type: textarea
+    id: feature
+    attributes:
+      label: Feature description
+      description: Describe the feature you'd like to see
+      placeholder: What feature would you like to see added?
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem this solves
+      description: What problem does this feature solve?
+      placeholder: Describe the problem or use case this feature would address
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed solution
+      description: How would you like this feature to work?
+      placeholder: Describe how you envision this feature working
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: What alternatives have you considered?
+      placeholder: Describe any alternative solutions you've considered
+
+  - type: textarea
+    id: examples
+    attributes:
+      label: Examples
+      description: Any examples or mockups?
+      placeholder: Provide examples, mockups, or references to similar features
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: How important is this feature to you?
+      options:
+        - Low - Nice to have
+        - Medium - Would be helpful
+        - High - Important for my workflow
+        - Critical - Blocking my usage
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional context
+      description: Any other context about the feature request
+      placeholder: Add any other context or screenshots about the feature request here

@@ -1,0 +1,98 @@
+{
+  "name": "bubulle",
+  "displayName": "🫧 Bubulle - Code Review Notes",
+  "description": "GitHub-style inline code review notes. Add, edit, and manage contextual notes directly on any line of your code.",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.74.0"
+  },
+  "categories": [
+    "Other",
+    "Notebooks"
+  ],
+  "keywords": [
+    "notes",
+    "comments",
+    "review",
+    "github",
+    "inline",
+    "code review",
+    "annotations",
+    "documentation"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Joey-Galligani/bubulle.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Joey-Galligani/bubulle/issues"
+  },
+  "homepage": "https://github.com/Joey-Galligani/bubulle#readme",
+  "license": "MIT",
+  "author": {
+    "name": "Joey-Galligani",
+    "email": "galliganijoey@gmail.com"
+  },
+  "activationEvents": [],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "bubulle.addNote",
+        "title": "Add Note"
+      },
+      {
+        "command": "bubulle.showNotes",
+        "title": "Show Notes"
+      },
+      {
+        "command": "bubulle.showBubble",
+        "title": "Show Bubble"
+      }
+    ],
+    "menus": {
+      "editor/lineNumber/context": [
+        {
+          "command": "bubulle.addNote",
+          "when": "editorTextFocus"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Bubulle",
+      "properties": {
+        "bubulle.notesFile": {
+          "type": "string",
+          "default": ".bubulle-notes.json",
+          "description": "Path to the notes configuration file"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "lint:fix": "eslint src --ext ts --fix",
+    "format": "prettier --write \"src/**/*.{ts,js,json}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,js,json}\"",
+    "test": "vscode-test",
+    "package": "vsce package",
+    "publish": "vsce publish"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.74.0",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "20.x",
+    "@typescript-eslint/eslint-plugin": "^8.28.0",
+    "@typescript-eslint/parser": "^8.28.0",
+    "eslint": "^9.23.0",
+    "prettier": "^3.0.0",
+    "typescript": "^5.8.2",
+    "@vscode/test-cli": "^0.0.10",
+    "@vscode/test-electron": "^2.4.1",
+    "vsce": "^2.15.0"
+  }
+}

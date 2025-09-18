@@ -1,0 +1,10 @@
+<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Bulle de savon principale -->
+  <circle cx="8" cy="8" r="6" fill="rgba(227, 242, 253, 0.8)" stroke="#90caf9" stroke-width="1.5"/>
+  <!-- Reflet de bulle de savon -->
+  <ellipse cx="6" cy="5" rx="2" ry="1.5" fill="rgba(255, 255, 255, 0.6)"/>
+  <!-- Petites bulles autour -->
+  <circle cx="3" cy="4" r="1.5" fill="rgba(227, 242, 253, 0.6)" stroke="#90caf9" stroke-width="0.8"/>
+  <circle cx="13" cy="3" r="1" fill="rgba(227, 242, 253, 0.6)" stroke="#90caf9" stroke-width="0.8"/>
+  <circle cx="12" cy="13" r="1.2" fill="rgba(227, 242, 253, 0.6)" stroke="#90caf9" stroke-width="0.8"/>
+</svg>
