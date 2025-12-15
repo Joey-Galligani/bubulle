@@ -75,7 +75,7 @@ jobs:
       run: vsce package
 
     - name: Upload extension package
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v6
       with:
         name: bubulle-extension
         path: '*.vsix'
